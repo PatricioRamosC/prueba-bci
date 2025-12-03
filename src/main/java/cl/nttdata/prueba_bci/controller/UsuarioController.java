@@ -20,6 +20,14 @@ import cl.nttdata.prueba_bci.dto.UsuarioResponseDTO;
 import cl.nttdata.prueba_bci.service.JwtService;
 import cl.nttdata.prueba_bci.service.UsuarioService;
 
+/**
+ * Controlador REST para la gestión de usuarios.
+ * Proporciona endpoints para operaciones CRUD de usuarios con autenticación JWT.
+ * 
+ * @author Patricio Ramos - NTTDATA
+ * @since 2025-01-01
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -27,25 +35,52 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	/**
+	 * Lista todos los usuarios registrados en el sistema.
+	 * 
+	 * @return ResponseEntity con lista de usuarios
+	 */
 	@GetMapping
 	public ResponseEntity<?> getUsuarios() {
 		List<UsuarioResponseDTO> response = usuarioService.listarUsuarios();
 	    return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
+	/**
+	 * Crea un nuevo usuario en el sistema.
+	 * 
+	 * @param request datos del usuario a crear
+	 * @param token token de autorización (opcional)
+	 * @return ResponseEntity con datos del usuario creado y token JWT
+	 */
 	@PostMapping
 	public ResponseEntity<?> postUsuarios(@RequestBody UsuarioRequestDTO request,
 			@RequestHeader(name = "Authorization", required = false) String token) {
 		UsuarioResponseDTO response = usuarioService.crearUsuario(request);
 	    return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-
+	
+	/**
+	 * Modifica un usuario en el sistema.
+	 *  
+	 * @param request datos del usuario a crear
+	 * @param token token de autorización (opcional)
+	 * @return ResponseEntity con datos del usuario creado y token JWT
+	 */
 	@PutMapping
 	public ResponseEntity<?> putUsuarios(@RequestBody UsuarioRequestDTO request,
 			@RequestHeader(name = "Authorization", required = false) String token) {
 		UsuarioResponseDTO response = usuarioService.actualizarUsuario(request, JwtService.cleanToken(token));
 	    return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
-	
+
+	/**
+	 * Modifica un usuario en el sistema.
+	 * 
+	 * @param request datos del usuario a crear
+	 * @param token token de autorización (opcional)
+	 * @return ResponseEntity con datos del usuario creado y token JWT
+	 */
 	@PatchMapping
 	public ResponseEntity<?> patchUsuarios(@RequestBody UsuarioRequestDTO request,
 			@RequestHeader(name = "Authorization", required = false) String token) {
@@ -53,6 +88,13 @@ public class UsuarioController {
 	    return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
+	/**
+	 * Elimina un usuario del sistema.
+	 * 
+	 * @param request datos del usuario a crear
+	 * @param token token de autorización (opcional)
+	 * @return ResponseEntity con datos del usuario creado y token JWT
+	 */
 	@DeleteMapping
 	public ResponseEntity<?> deleteUsuarios(@RequestBody UsuarioRequestDTO request,
 			@RequestHeader(name = "Authorization", required = false) String token) {

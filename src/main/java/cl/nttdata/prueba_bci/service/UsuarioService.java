@@ -18,6 +18,15 @@ import cl.nttdata.prueba_bci.repository.UsuarioRepository;
 import cl.nttdata.prueba_bci.exception.TokenInvalidoException;
 import cl.nttdata.prueba_bci.exception.UsuarioInexistenteException;
 
+/**
+ * Servicio para la gestión de usuarios del sistema.
+ * Proporciona operaciones CRUD con validaciones de seguridad, encriptación de contraseñas
+ * y manejo de tokens JWT para autenticación.
+ * 
+ * @author Patricio Ramos - NTTDATA
+ * @since 2025-01-01
+ * @version 1.0
+ */
 @Service
 public class UsuarioService {
 
@@ -31,9 +40,13 @@ public class UsuarioService {
     private ValidacionService validacionService;
     
     /**
+     * Crea un nuevo usuario en el sistema con validaciones de correo y contraseña.
+     * Genera un token JWT y encripta la contraseña antes de almacenar.
      * 
-     * @param 	UsuarioRequestDTO - estructura completa del usuario y teléfonos asociados.
-     * @return	UsuarioResponseDTO
+     * @param request estructura completa del usuario y teléfonos asociados
+     * @return UsuarioResponseDTO con los datos del usuario creado y el token generado
+     * @throws CorreoExistenteException si el correo ya está registrado
+     * @throws IllegalArgumentException si la contraseña no cumple el formato requerido
      */
     @Transactional
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO request) {
@@ -62,6 +75,11 @@ public class UsuarioService {
         return response;
     }
     
+    /**
+     * Lista todos los usuarios registrados en el sistema.
+     * 
+     * @return Lista de UsuarioResponseDTO con la información básica de todos los usuarios
+     */
     public List<UsuarioResponseDTO> listarUsuarios() {
         return usuarioRepository.findAll().stream()
             .map(usuario -> {
@@ -76,6 +94,16 @@ public class UsuarioService {
             }).collect(Collectors.toList());
     }
     
+    /**
+     * Actualiza los datos de un usuario existente.
+     * Valida el token JWT antes de permitir la actualización.
+     * 
+     * @param request datos del usuario a actualizar
+     * @param token token JWT para validar la autorización
+     * @return UsuarioResponseDTO con los datos actualizados
+     * @throws TokenInvalidoException si el token es inválido o expirado
+     * @throws UsuarioInexistenteException si el usuario no existe
+     */
     @Transactional
     public UsuarioResponseDTO actualizarUsuario(UsuarioRequestDTO request, String token) {
         validarToken(token, request.getCorreo());
@@ -93,6 +121,16 @@ public class UsuarioService {
         return grabarUsuario(usuario);
     }
     
+    /**
+     * Elimina un usuario del sistema.
+     * Valida el token JWT antes de permitir la eliminación.
+     * 
+     * @param request datos del usuario a eliminar (requiere correo)
+     * @param token token JWT para validar la autorización
+     * @return UsuarioResponseDTO con el estado final del usuario eliminado
+     * @throws TokenInvalidoException si el token es inválido o expirado
+     * @throws UsuarioInexistenteException si el usuario no existe
+     */
     @Transactional
     public UsuarioResponseDTO eliminarUsuario(UsuarioRequestDTO request, String token) {
         validarToken(token, request.getCorreo());
@@ -107,9 +145,11 @@ public class UsuarioService {
     }
 
     /**
-     * En caso de que el token no sea válido, se lanza una excepción.
-     * @param token
-     * @param email
+     * Valida que el token JWT sea válido y corresponda al email proporcionado.
+     * 
+     * @param token token JWT a validar
+     * @param email correo electrónico asociado al token
+     * @throws TokenInvalidoException si el token es inválido, expirado o no corresponde al email
      */
     private void validarToken(String token, String email) {
         if (!jwtService.isTokenValid(token, email)) {
@@ -117,11 +157,23 @@ public class UsuarioService {
         }
     }
     
+    /**
+     * Persiste un usuario en la base de datos y retorna la respuesta formateada.
+     * 
+     * @param usuario entidad del usuario a guardar
+     * @return UsuarioResponseDTO con los datos del usuario guardado
+     */
     private UsuarioResponseDTO grabarUsuario(UsuarioModel usuario) {
         UsuarioModel guardado = usuarioRepository.saveAndFlush(usuario);
         return crearResponse(guardado);
     }
     
+    /**
+     * Convierte una entidad UsuarioModel a UsuarioResponseDTO.
+     * 
+     * @param usuario entidad del usuario a convertir
+     * @return UsuarioResponseDTO con los datos básicos del usuario
+     */
     private UsuarioResponseDTO crearResponse(UsuarioModel usuario) {
         UsuarioResponseDTO response = new UsuarioResponseDTO();
         response.setId(usuario.getId());
@@ -135,9 +187,11 @@ public class UsuarioService {
     }
 
     /**
-     * Toma todos los teléfonos que vienen desde el request y los traspasa a la estructura de TelefonoModel del usuario. 
-     * @param request
-     * @param usuario
+     * Asigna los teléfonos del request al usuario, reemplazando los existentes.
+     * Crea nuevas entidades TelefonoModel y las asocia al usuario.
+     * 
+     * @param request datos del request que contiene la lista de teléfonos
+     * @param usuario entidad del usuario al que se asignarán los teléfonos
      */
     private void setearTelefonos(UsuarioRequestDTO request, UsuarioModel usuario) {
         List<TelefonoModel> telefonos = new ArrayList<>();
@@ -159,6 +213,13 @@ public class UsuarioService {
         usuario.setTelefonos(telefonos);
     }
 
+    /**
+     * Busca un usuario por su correo electrónico.
+     * 
+     * @param correo correo electrónico del usuario a buscar
+     * @return UsuarioModel encontrado
+     * @throws UsuarioInexistenteException si no se encuentra el usuario
+     */
     private UsuarioModel buscarUsuario(String correo) {
         // Buscar usuario por correo
         return usuarioRepository.findByCorreo(correo)

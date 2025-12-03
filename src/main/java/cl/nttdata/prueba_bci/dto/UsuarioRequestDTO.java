@@ -6,10 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
-/**	
- * @apiNote DTO - Que representa un usuario 
- * @author pramosca - nttdata
- * @since 2025-12-01
+/**
+ * DTO para recibir datos de usuario en requests HTTP.
+ * Contiene información personal del usuario y lista de teléfonos asociados.
+ * 
+ * @author Patricio Ramos - NTTDATA
+ * @since 2025-01-01
+ * @version 1.0
  */
 
 @Data

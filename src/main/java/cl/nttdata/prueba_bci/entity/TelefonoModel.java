@@ -11,6 +11,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Data;
 
+/**
+ * Entidad JPA que representa un teléfono asociado a un usuario.
+ * Contiene número telefónico y códigos de país y ciudad.
+ * 
+ * @author Patricio Ramos - NTTDATA
+ * @since 2025-01-01
+ * @version 1.0
+ */
 @Entity
 @Data
 @Table(name = "telefonos")

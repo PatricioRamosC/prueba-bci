@@ -16,6 +16,14 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.Data;
 
+/**
+ * Entidad JPA que representa un usuario en el sistema.
+ * Contiene información personal, credenciales y relación con teléfonos.
+ * 
+ * @author Patricio Ramos - NTTDATA
+ * @since 2025-01-01
+ * @version 1.0
+ */
 @Entity
 @Data
 @Table(

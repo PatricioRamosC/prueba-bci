@@ -11,6 +11,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+/**
+ * Servicio para la gestión de tokens JWT (JSON Web Tokens).
+ * Proporciona funcionalidades para generar y validar tokens de autenticación
+ * con algoritmo HMAC256 y expiración configurable.
+ * 
+ * @author Patricio Ramos - NTTDATA
+ * @since 2025-01-01
+ * @version 1.0
+ */
 @Service
 public class JwtService {
 
@@ -19,6 +28,12 @@ public class JwtService {
     @Value("${jwt.expiration.time:24}")
     private long EXPIRATION_TIME;
 
+    /**
+     * Genera un token JWT para el usuario especificado.
+     * 
+     * @param email correo electrónico del usuario para incluir como subject
+     * @return token JWT firmado con expiración de 24 horas
+     */
     public String generateToken(String email) {
         return JWT.create()
                 .withSubject(email)
@@ -27,6 +42,13 @@ public class JwtService {
                 .sign(Algorithm.HMAC256(SECRET_KEY));
     }
 
+    /**
+     * Valida si un token JWT es válido y corresponde al email especificado.
+     * 
+     * @param token token JWT a validar
+     * @param email correo electrónico esperado en el subject del token
+     * @return true si el token es válido y no ha expirado, false en caso contrario
+     */
     public boolean isTokenValid(String token, String email) {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build();
@@ -37,6 +59,12 @@ public class JwtService {
         }
     }
     
+    /**
+     * Limpia el token JWT removiendo el prefijo "Bearer" si existe.
+     * 
+     * @param tokenRequest token con posible prefijo "Bearer"
+     * @return token limpio sin prefijo, o null si el input es null
+     */
     public static String cleanToken(String tokenRequest) {
     	if (tokenRequest == null) {
     		return null;

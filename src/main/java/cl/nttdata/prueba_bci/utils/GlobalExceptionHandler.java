@@ -11,45 +11,83 @@ import cl.nttdata.prueba_bci.exception.UsuarioInexistenteException;
 import cl.nttdata.prueba_bci.exception.FormatoCorreoInvalidoException;
 import cl.nttdata.prueba_bci.exception.TokenInvalidoException;
 
+/**
+ * Manejador global de excepciones para la API.
+ * Captura y maneja todas las excepciones del sistema retornando respuestas HTTP apropiadas.
+ * 
+ * @author Patricio Ramos - NTTDATA
+ * @since 2025-01-01
+ * @version 1.0
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Usuario inexistente → 204 No content
+    /**
+     * Maneja excepciones de usuario inexistente.
+     * 
+     * @param ex excepción de usuario inexistente
+     * @return respuesta HTTP 204 No Content con mensaje de error
+     */
     @ExceptionHandler(UsuarioInexistenteException.class)
     public ResponseEntity<ErrorResponseDTO> handleCorreoInexistente(UsuarioInexistenteException ex) {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(error);
     }
 
-    // Correo duplicado → 409 Conflict
+    /**
+     * Maneja excepciones de correo duplicado.
+     * 
+     * @param ex excepción de correo existente
+     * @return respuesta HTTP 409 Conflict con mensaje de error
+     */
     @ExceptionHandler(CorreoExistenteException.class)
     public ResponseEntity<ErrorResponseDTO> handleCorreoDuplicado(CorreoExistenteException ex) {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // Formato correo inválido → 400 Bad Request
+    /**
+     * Maneja excepciones de formato de correo inválido.
+     * 
+     * @param ex excepción de formato de correo inválido
+     * @return respuesta HTTP 400 Bad Request con mensaje de error
+     */
     @ExceptionHandler(FormatoCorreoInvalidoException.class)
     public ResponseEntity<ErrorResponseDTO> handleFormatoCorreo(FormatoCorreoInvalidoException ex) {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    // Contraseña inválida → 400 Bad Request
+    /**
+     * Maneja excepciones de contraseña inválida.
+     * 
+     * @param ex excepción de argumento ilegal (contraseña inválida)
+     * @return respuesta HTTP 400 Bad Request con mensaje de error
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDTO> handleContrasenaInvalida(IllegalArgumentException ex) {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    // Token inválido → 401 Unauthorized
+    /**
+     * Maneja excepciones de token JWT inválido.
+     * 
+     * @param ex excepción de token inválido
+     * @return respuesta HTTP 401 Unauthorized con mensaje de error
+     */
     @ExceptionHandler(TokenInvalidoException.class)
     public ResponseEntity<ErrorResponseDTO> handleTokenInvalido(TokenInvalidoException ex) {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
-    // Fallback genérico → 500 Internal Server Error
+    /**
+     * Maneja cualquier excepción no capturada por otros handlers.
+     * 
+     * @param e excepción genérica
+     * @return respuesta HTTP 500 Internal Server Error con mensaje genérico
+     */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneric(Throwable e) {
         ErrorResponseDTO error = new ErrorResponseDTO("Error interno del servidor");
