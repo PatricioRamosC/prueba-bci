@@ -50,9 +50,8 @@ public class GlobalExceptionHandler {
     }
 
     // Fallback genérico → 500 Internal Server Error
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDTO> handleGeneric(Exception ex) {
-    	System.out.println(ex.toString());
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<ErrorResponseDTO> handleGeneric(Throwable e) {
         ErrorResponseDTO error = new ErrorResponseDTO("Error interno del servidor");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }

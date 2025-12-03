@@ -3,6 +3,7 @@ package cl.nttdata.prueba_bci.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.PrePersist;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,13 +27,15 @@ import lombok.Data;
 public class UsuarioModel {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @org.hibernate.annotations.GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(name = "id", nullable = false, updatable = false)
-    private UUID id;
+    @Column(name = "id", nullable = false, updatable = false, length = 36)
+    private String id;
+    
+    @javax.persistence.PrePersist
+    public void generateId() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
+    }
 
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;

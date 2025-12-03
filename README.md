@@ -156,13 +156,6 @@ Content-Type: application/json
 | 409    | Correo ya registrado                                       |
 | 500    | Error interno del servidor                                 |
 
-## Tabla
-
-| Izquierda    | Centro        | Derecha      |
-|--------------|---------------|--------------|
-| texto        | texto         | texto        |
-| más texto    | más texto     | más texto    |
-
 ## Ejemplos de Uso
 
 ### Crear Usuario y Obtener Token

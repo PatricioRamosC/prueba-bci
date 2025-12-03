@@ -15,7 +15,7 @@ import cl.nttdata.prueba_bci.entity.UsuarioModel;
  * @author 	pramosca - nttdata
  * @since 	2023-12-01
  */
-public interface UsuarioRepository extends JpaRepository<UsuarioModel, UUID> {
+public interface UsuarioRepository extends JpaRepository<UsuarioModel, String> {
 
     // Búsqueda por correo (para validar que no esté duplicado)
     Optional<UsuarioModel> findByCorreo(String correo);

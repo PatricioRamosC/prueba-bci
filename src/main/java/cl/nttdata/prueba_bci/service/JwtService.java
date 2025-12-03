@@ -31,11 +31,8 @@ public class JwtService {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build();
             DecodedJWT jwt = verifier.verify(token);
-            System.out.println(jwt.getSubject());
-            System.out.println(jwt.getExpiresAt().after(new Date()));
             return jwt.getSubject().equals(email) && jwt.getExpiresAt().after(new Date());
         } catch (JWTVerificationException e) {
-        	System.out.println(e.toString());
             return false;
         }
     }

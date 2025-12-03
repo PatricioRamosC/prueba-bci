@@ -59,8 +59,6 @@ public class UsuarioService {
         setearTelefonos(request, usuario);
         
         UsuarioResponseDTO response = grabarUsuario(usuario);
-        System.out.println("Antes del toString");
-        System.out.println(usuario.getTelefonos().size());
         return response;
     }
     
@@ -80,27 +78,18 @@ public class UsuarioService {
     
     @Transactional
     public UsuarioResponseDTO actualizarUsuario(UsuarioRequestDTO request, String token) {
-        System.out.println("Antes de validar token: " + token);
         validarToken(token, request.getCorreo());
         
-        // Buscar usuario por correo
         UsuarioModel usuario = buscarUsuario(request.getCorreo());
         
-        System.out.println(usuario.toString());
-        
-        // Actualizar datos
+        // Actualizar campos directamente en la entidad gestionada
         usuario.setNombre(request.getNombre());
         usuario.setContrasena(validacionService.encriptarContrasena(request.getContrasena()));
-        usuario.setActivo(true);
         usuario.setModificado(LocalDateTime.now());
         usuario.setUltimoLogin(LocalDateTime.now());
         
-        // Si se envían teléfonos, actualizarlos también
-        if (request.getTelefonos() != null) {
-        	setearTelefonos(request, usuario);
-        }
+        setearTelefonos(request, usuario);
         
-        // Aquí se registra el cambio; el UPDATE real se ejecutará en el flush/commit
         return grabarUsuario(usuario);
     }
     
@@ -168,12 +157,9 @@ public class UsuarioService {
         	}).collect(Collectors.toList()).forEach(telefonos::add);
         }
         usuario.setTelefonos(telefonos);
-        
-        System.out.println("Telefonos : " + usuario.getTelefonos().size());
     }
 
     private UsuarioModel buscarUsuario(String correo) {
-        System.out.println(correo);
         // Buscar usuario por correo
         return usuarioRepository.findByCorreo(correo)
                 .orElseThrow(() -> new UsuarioInexistenteException("Usuario no encontrado"));
