@@ -28,9 +28,11 @@ public class ValidacionService {
 
     @Value("${app.password.regex}")
     private String passwordRegex;
+    
+    @Value("${app.email.regex}")
+    private String emailRegex;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final Pattern emailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
     /**
      * Valida el formato del correo electrónico y verifica que no esté duplicado.
@@ -40,7 +42,7 @@ public class ValidacionService {
      * @throws CorreoExistenteException si el correo ya está registrado
      */
     public void validarCorreo(String correo) {
-        if (!emailPattern.matcher(correo).matches()) {
+        if (!Pattern.matches(emailRegex, correo)) {
             throw new FormatoCorreoInvalidoException("Formato de correo inválido");
         }
         

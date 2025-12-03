@@ -86,6 +86,19 @@ Content-Type: application/json
 GET /usuarios
 ```
 
+**Respuesta exitosa (201):**
+```json
+[
+  {
+    "id": "uuid-generado",
+    "creado": "2025-01-01T10:00:00",
+    "modificado": "2025-01-01T10:00:00",
+    "ultimoLogin": "2025-01-01T10:00:00",
+    "token": "jwt-token-generado",
+    "activo": true
+  }
+]```
+
 ### 3. Actualizar Usuario
 ```http
 PUT /usuarios
@@ -94,7 +107,7 @@ Content-Type: application/json
 
 {
   "nombre": "Juan Carlos Pérez",
-  "correo": "juan@example.com"
+  "correo": "juan@example.com",
   "contraseña": "Password123!",
   "telefonos": [
     {
@@ -106,6 +119,25 @@ Content-Type: application/json
 }
 ```
 
+**También disponible con PATCH:**
+```http
+PATCH /usuarios
+Authorization: Bearer <jwt-token>
+Content-Type: application/json
+```
+
+**Respuesta exitosa (200):**
+```json
+{
+  "id": "uuid-existente",
+  "creado": "2025-01-01T10:00:00",
+  "modificado": "2025-01-01T12:00:00",
+  "ultimoLogin": "2025-01-01T12:00:00",
+  "token": "jwt-token-generado",
+  "activo": true
+}
+```
+
 ### 4. Eliminar Usuario
 ```http
 DELETE /usuarios
@@ -114,6 +146,18 @@ Content-Type: application/json
 
 {
   "correo": "juan@example.com"
+}
+```
+
+**Respuesta exitosa (200):**
+```json
+{
+  "id": "uuid-eliminado",
+  "creado": "2025-01-01T10:00:00",
+  "modificado": "2025-01-01T10:00:00",
+  "ultimoLogin": "2025-01-01T10:00:00",
+  "token": null,
+  "activo": false
 }
 ```
 
@@ -177,7 +221,18 @@ curl -X PUT http://localhost:8080/usuarios \
   -H "Content-Type: application/json" \
   -d '{
     "nombre": "Updated Name",
-    "correo": "test@example.com"
+    "correo": "test@example.com",
+    "contraseña": "NewPassword123!"
+  }'
+
+# O usando PATCH
+curl -X PATCH http://localhost:8080/usuarios \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Updated Name",
+    "correo": "test@example.com",
+    "contraseña": "NewPassword123!"
   }'
 ```
 
@@ -335,10 +390,19 @@ src/main/java/cl/nttdata/prueba_bci/
 
 ## Autenticación
 
-Todos los endpoints excepto POST (crear usuario) requieren token JWT en el header:
+Todos los endpoints excepto POST (crear usuario) y GET (listar usuarios) requieren token JWT en el header:
 ```
 Authorization: Bearer <jwt-token>
 ```
+
+**Endpoints que NO requieren autenticación:**
+- `POST /usuarios` - Crear usuario
+- `GET /usuarios` - Listar usuarios
+
+**Endpoints que requieren autenticación:**
+- `PUT /usuarios` - Actualizar usuario
+- `PATCH /usuarios` - Actualizar usuario (parcial)
+- `DELETE /usuarios` - Eliminar usuario
 
 ## Autor
 
